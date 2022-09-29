@@ -112,3 +112,24 @@ data "aws-ami" "amzlinux" {
 
 #########
 # Block 8: **Modules Block**
+# AWS  EC2 Instance module
+
+module "ec2_cluster" {
+    source = "terraform-aws-modules/ec2-instance/aws"
+    version = "~> 2.0"
+
+    name - "my-modules-demo"
+    instance_count = 2
+
+    ami = data.aws_ami.amzlinux.id
+    instance_type = "t2.micro"
+    monitoring = true
+    vpc_security_group_ids = ["sg-08b25c5a5bf489ffa"] #Get Default VPC Security Group ID and replace
+    subnet_id = "subnet-4ee95470" #Get one public subnet id from default vpc and replace
+    user_data = file("apache-install.sh")
+
+    tags = {
+        Terraform = "true"
+        Environment = "dev"
+    }
+}
