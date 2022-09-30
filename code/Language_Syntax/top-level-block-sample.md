@@ -113,6 +113,7 @@ data "aws-ami" "amzlinux" {
 #########
 # Block 8: **Modules Block**
 # AWS  EC2 Instance module
+<!-- a group of terraform files in a directory is called a module -->
 
 module "ec2_cluster" {
     source = "terraform-aws-modules/ec2-instance/aws"

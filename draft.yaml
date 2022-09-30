@@ -1,0 +1,96 @@
+Variables: 
+terraform {
+    required_version = "~>1.0"
+    required_providers {
+        aws ={
+            source = "hashicorp/aws"
+            version = "~>3.0"
+        }
+    }
+}
+
+#provider block
+provider "aws" {
+    region = var.region
+}
+
+resource "aws_instance" "myec2vm"{
+    ami = var.my_ami #us-east-1
+    instance_type = var.instance_type
+    user_data = file("${path.module}/app1-install.sh")
+    tags = {
+        "Name" = "EC2 Demo"
+    }
+}
+
+variable "region" {
+    description = "The aws region"
+    type = string
+    default = "us-east-1"
+}
+
+variable "my_ami" {
+    description = "The aws ami",
+    type = string
+    default = "ami-0c41531b8d18cc72b"
+}
+
+variable "instance_type" {
+    description = "The ec2 instance type",
+    type = string
+    default = "t2.micro"
+}
+
+==================================================
+# security group
+
+
+resource "aws_security_group" "allow_tls" {
+  name        = "allow_tls"
+  description = "Allow TLS inbound traffic"
+#   vpc_id      = aws_vpc.main.id
+
+# ingress = inbound rules
+# egress = outbound rules
+
+
+  ingress {
+    description      = "TLS from VPC"
+    from_port        = 443
+    to_port          = 443
+    protocol         = "tcp"
+    cidr_blocks      = [aws_vpc.main.cidr_block]
+    # ipv6_cidr_blocks = [aws_vpc.main.ipv6_cidr_block]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1" #meaning open all ports
+    cidr_blocks      = ["0.0.0.0/0"] #means we are opening from anywhere
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_tls"
+  }
+}
+
+
+
+
+
+=================================================
+#! /bin/bash
+
+# Instance Identity Metadata Reference
+sudo yum update -y
+sudo yum install -y httpd
+sudo systemctl enable httpd
+sudo service httpd start
+sudo echo '<h1>Welcome Mani DevOps</h1>' | sudo tee /var/www/html/index.html
+sudo mkdir /var/www/html/app1
+sudo echo '<!DOCTYPE html> <html><body style="background-color: rgb(250,210,210);"><h1>Welcome to Manuel DevOps</h1><p>Terraform Demo</p><p>Application Version: V1</p></body></html>' | sudo tee /var/www/html/index.html
+sudo curl http://169.254.169.254/latest/dynamic/instance-identity/document -o /var/www/html/app1/metadata.html
+
+======================================================
