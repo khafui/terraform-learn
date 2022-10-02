@@ -1,5 +1,4 @@
 #! /bin/bash
-
 # Instance Identity Metadata Reference
 sudo yum update -y
 sudo yum install -y httpd

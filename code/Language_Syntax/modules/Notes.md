@@ -28,3 +28,4 @@
  - must be on github and must be a public repo, if uding public registry.
  - must be named terraform-<PROVIDER>-<NAME>, <NAME> reflects the type of infrastructure the module manages and <PROVIDER> is the main provider where it creates that infrastructure. for example terraform-google-vault or terraform-aws-ec2-instance.
  - must maintain x.y.z tags for releases to identify module versions. Release tag names must be a semantic version, which can optionally be prefixed with a v for example, v1.0.4 and 0.9.2. Tags that don't look like version numbers are ignored.
+ - must maintain a standard module structure, which allows the registry to inspect the moduke and generate documentation, track resource usage, parse submodules and examples, and more.
