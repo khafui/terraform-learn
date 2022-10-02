@@ -1,4 +1,6 @@
 # Data Sources 
+/* get latest ami id for linux2 os */
+/* to query data we use the data block accompanied with resourse type */
 
 
 data "aws_ami" "amazonlinux2" {

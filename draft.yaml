@@ -135,3 +135,54 @@ sudo echo '<!DOCTYPE html> <html><body style="background-color: rgb(250,210,210)
 sudo curl http://169.254.169.254/latest/dynamic/instance-identity/document -o /var/www/html/app1/metadata.html
 
 ======================================================
+
+# dynamic block
+# you can use a variable
+variable "ingressrules"{
+  type = list(number)
+  default = [80,443,8080,22]
+}
+
+variable "egressrules" {
+type = list(number)
+default = [80,443,25,3306,53,8080]
+}
+
+
+# create a security group - ssh traffic
+resource "aws_security_group" "vpc-web-traffic" {
+  name        = "Allow_tls"
+  description = "opening custom ports"
+
+dynamic "ingress" {
+    description = "Allow Port 80"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow Port 443"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Allow all ip and ports outbound"
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "vpc-web"
+  }
+}
+
+# task
+# for ingress open ports 80,443,8080,22
+# for egress open ports 80,443,25,3306,53,8080 
